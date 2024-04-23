@@ -1,17 +1,17 @@
 name: Automate
 on:
   schedule:
-    - cron: "*/1 * * * *"
+    - cron: "*/5 * * * *"
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository content
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Setup Python Version
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v2
         with:
           python-version: 3.9
           cache: 'pip'

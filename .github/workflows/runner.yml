@@ -1,0 +1,61 @@
+name: Automate
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Get Committer Email
+      run: |
+        AUTHOR=`git show HEAD|grep Author|head -1|awk '{print $NF}'|tr -d '<'|tr -d '>'`
+        echo $AUTHOR
+        if [ "`echo $AUTHOR|grep users.noreply.github.com`" != "" ]
+        then
+          AUTHOR="no" 
+          export AUTHOR
+          echo "AUTHOR=$AUTHOR" >> $GITHUB_ENV
+        else
+          export AUTHOR
+          echo "AUTHOR=$AUTHOR" >> $GITHUB_ENV
+        fi
+    - name: Install pre-requisites
+      run: |
+        sudo apt update
+        sudo apt install jsonlint jq python3.9-minimal python-pip python-yaml -y
+        sudo pip install requests
+    - name: Get list of modified/added files
+      shell: bash
+      run: |
+        cd $GITHUB_WORKSPACE
+        git diff-tree --no-commit-id --name-only -r HEAD | tee $HOME/files_added # for live
+    - name: Extract branch name
+      shell: bash
+      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      id: extract_branch
+    - name: Sync Controls
+      shell: bash
+      env:
+        REPOUSERNAME: ${{ secrets.REPOUSER }}
+        REPOKEY: ${{ secrets.REPOSECRET }}
+        DBHOST : ${{ secrets.ARROW_DB_HOST}}
+        DBPORT: ${{ secrets.ARROW_DB_PORT }}
+        DBUSERNAME: ${{ secrets.SBDBUSER }}
+        DBPASSWORD: ${{ secrets.SBDBPASS }}
+      run: |
+        # Determine added/updated controls
+        sudo /usr/bin/python3.9 $GITHUB_WORKSPACE/.github/scripts/automate.py
+    - name: Send some mail
+      uses: wadeww/send-email-action@master
+      with:
+        server_address: smtp.gmail.com
+        port: 465
+        username: corestacknotifications@gmail.com
+        password: ${{ secrets.GMAILPASS }}
+        subject: Workflow is ${{ job.status }} for the commit - ${{ github.event.head_commit.message }}
+        body: "- CI Build - Automated Workflow"
+        to: ${{ env.AUTHOR }}
+        from: notifications@github.com
+      if: env.AUTHOR != 'no'
+      continue-on-error: true

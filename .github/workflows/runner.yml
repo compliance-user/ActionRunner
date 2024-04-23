@@ -23,7 +23,7 @@ jobs:
     - name: Install pre-requisites
       run: |
         sudo apt update
-        sudo apt install jsonlint jq python3.9-minimal python-pip python-yaml -y
+        sudo apt install jsonlint jq python3.9 python3-pip python-yaml -y
         sudo pip install requests
     - name: Get list of modified/added files
       shell: bash

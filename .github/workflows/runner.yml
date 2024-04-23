@@ -10,6 +10,7 @@ jobs:
     - uses: actions/setup-python@v2
       with:
         python-version: '3.9'
+        cache: 'pip'
     - name: Get Committer Email
       run: |
         AUTHOR=`git show HEAD|grep Author|head -1|awk '{print $NF}'|tr -d '<'|tr -d '>'`
@@ -25,7 +26,7 @@ jobs:
         fi
     - name: Install pre-requisites
       run: |
-        sudo pip install requests
+        pip install -r requirements.txt
     - name: Get list of modified/added files
       shell: bash
       run: |
@@ -44,9 +45,7 @@ jobs:
         DBPORT: ${{ secrets.ARROW_DB_PORT }}
         DBUSERNAME: ${{ secrets.SBDBUSER }}
         DBPASSWORD: ${{ secrets.SBDBPASS }}
-      run: |
-        # Determine added/updated controls
-        sudo /usr/bin/python3.9 $GITHUB_WORKSPACE/.github/scripts/automate.py
+      run: automate.py
     - name: Send some mail
       uses: wadeww/send-email-action@master
       with:

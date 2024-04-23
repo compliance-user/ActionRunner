@@ -7,6 +7,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
     - name: Get Committer Email
       run: |
         AUTHOR=`git show HEAD|grep Author|head -1|awk '{print $NF}'|tr -d '<'|tr -d '>'`
@@ -22,8 +25,6 @@ jobs:
         fi
     - name: Install pre-requisites
       run: |
-        sudo apt update
-        sudo apt install jsonlint jq python3.9 python3-pip python-yaml -y
         sudo pip install requests
     - name: Get list of modified/added files
       shell: bash

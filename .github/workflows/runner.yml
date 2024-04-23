@@ -45,7 +45,7 @@ jobs:
         DBPORT: ${{ secrets.ARROW_DB_PORT }}
         DBUSERNAME: ${{ secrets.SBDBUSER }}
         DBPASSWORD: ${{ secrets.SBDBPASS }}
-      run: automate.py
+      run: python automate.py
     - name: Send some mail
       uses: wadeww/send-email-action@master
       with:

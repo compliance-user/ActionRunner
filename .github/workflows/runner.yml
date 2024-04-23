@@ -6,7 +6,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2.3.4
     - uses: actions/setup-python@v2
       with:
         python-version: '3.9'
@@ -27,16 +27,11 @@ jobs:
     - name: Install pre-requisites
       run: |
         pip install -r requirements.txt
-    - name: Get list of modified/added files
-      shell: bash
-      run: |
-        cd $GITHUB_WORKSPACE
-        git diff-tree --no-commit-id --name-only -r HEAD | tee $HOME/files_added # for live
     - name: Extract branch name
       shell: bash
       run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
       id: extract_branch
-    - name: Sync Controls
+    - name: Fetch Secrets and Run the Script
       shell: bash
       env:
         REPOUSERNAME: ${{ secrets.REPOUSER }}
@@ -46,7 +41,7 @@ jobs:
         DBUSERNAME: ${{ secrets.SBDBUSER }}
         DBPASSWORD: ${{ secrets.SBDBPASS }}
       run: python automate.py
-    - name: Send some mail
+    - name: Send an mail
       uses: wadeww/send-email-action@master
       with:
         server_address: smtp.gmail.com

@@ -20,4 +20,4 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Execute Python script
-        run: /usr/ automate.py
+        run: /usr/bin/python automate.py

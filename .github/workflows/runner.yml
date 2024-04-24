@@ -17,4 +17,7 @@ jobs:
 
       - name: Install Python dependencies
         run: pip install -r requirements.txt
-      - run: python automate.py
+
+      - name: Execute a python script
+        working-directory: .github/scripts
+        run: python automate.py

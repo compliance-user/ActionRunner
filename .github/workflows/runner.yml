@@ -8,16 +8,13 @@ jobs:
 
     steps:
       - name: Checkout repository content
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup Python Version
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: 3.9
-          cache: 'pip'
 
       - name: Install Python dependencies
         run: pip install -r requirements.txt
-
-      - name: Execute Python script
-        run: /usr/bin/python automate.py
+      - run: python automate.py

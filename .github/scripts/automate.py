@@ -395,7 +395,8 @@ def fetch_advisor_recommendations(headers):
             })
 
     df = pandas.DataFrame(resp_list)
-    df.to_excel('advisor_recommendations.xlsx', index=False)
+    path = './github/excel/advisor_recommendations.xlsx'
+    df.to_excel(path, index=False)
 
 
 if __name__ == "__main__":
